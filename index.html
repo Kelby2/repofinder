@@ -19,16 +19,13 @@
       </form>
 
       <ul id="user-repos-list">
-
       </ul>
     </main>
 
     <script type='text/javascript'>
-
       function fetchRepos() {
         event.preventDefault()
         let user = event.currentTarget[0].value;
-
 
         $.ajax({
           method: 'get',
@@ -41,6 +38,10 @@
 
             $("#user-repos-list").empty();
 
+            if (repositories.length === 0) {
+              $("#user-repos-list").append("<li>This user currently has no public repositories</li>")
+            }
+
             repositories.forEach(repo => {
               $("#user-repos-list").append(`
                 <li><a href=${repo[1]}>${repo[0]}</a></li>`
@@ -48,7 +49,6 @@
             })
           },
           error: res => {
-            debugger
             $("#user-repos-list").empty();
             $("#user-repos-list").append("<li class='error'>User does not exist</li>")
           }
