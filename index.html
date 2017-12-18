@@ -9,22 +9,52 @@
 
   </head>
   <body>
+    <main id="app">
+      <h1>RepoFinder</h1>
 
-    <h1>RepoFinder</h1>
+      <form id="username-form">
+        Please enter a Github username:
+        <input type="search" placeholder="Username"></input>
+        <input type="submit" value="Search"></input>
+      </form>
 
-    <form id="username-form">
-      Please enter a username:
-      <input type="search" placeholder="Username"></input>
-      <input type="submit" value="Search"></input>
-    </form>
+      <ul id="user-repos-list">
 
-    <ul id="user-repos">
-      <li>Android</li>
-    </ul>
+      </ul>
+    </main>
 
     <script type='text/javascript'>
 
+      function fetchRepos() {
+        event.preventDefault()
+        let user = event.currentTarget[0].value;
 
+
+        $.ajax({
+          method: 'get',
+          url: `https://api.github.com/users/${user}/repos`,
+          success: res => {
+            let repositories = [];
+            res.forEach(repo => {
+              repositories.push([repo.name, repo.html_url]);
+            })
+
+            $("#user-repos-list").empty();
+
+            repositories.forEach(repo => {
+              $("#user-repos-list").append(`
+                <li><a href=${repo[1]}>${repo[0]}</a></li>`
+              )
+            })
+          },
+          error: res => {
+            debugger
+            $("#user-repos-list").empty();
+            $("#user-repos-list").append("<li class='error'>User does not exist</li>")
+          }
+        })
+      }
+      $("#username-form").on('submit', () => fetchRepos())
     </script>
   </body>
 </html>
